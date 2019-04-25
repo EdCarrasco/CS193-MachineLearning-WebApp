@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Cluster 1</title>
+	<script type="text/javascript" src="p5.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
+
+	<script type="text/javascript" src="globalvariables.js"></script>
+	<script type="text/javascript" src="functions.js"></script>
+	<script type="text/javascript" src="Node.js"></script>
+	<script type="text/javascript" src="NodeManager.js"></script>
+	
+	<script type="text/javascript" src="main.js"></script>
+	<style type="text/css">
+		.red {
+			background-color: rgb(255,100,100);
+		}
+		.green {
+			background-color: rgb(100,255,100);
+		}
+		.blue {
+			background-color: rgb(100,100,255);
+		}
+		.slider {
+			margin-top: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div id="canvas-container"></div>
+	<!-- COLOR BUTTONS -->
+	<button id="button1" class="red" onclick="setClass(1);">Red</button>
+	<button id="button2" class="green" onclick="setClass(2);">Green</button>
+	<button id="button3" class="blue" onclick="setClass(3) ;">Blue</button>
+
+	<!-- KNN BUTTONS -->
+	<button id="button1" onclick="setK(0);">0</button>
+	<button id="button1" onclick="setK(3);">3</button>
+	<button id="button2" onclick="setK(7);">7</button>
+	<button id="button2" onclick="setK(1000);">ALL</button>
+	
+	<!-- NODE BUTTONS -->
+	<button id="buttonGenerate" onclick="generatePoints(1000,1,1);">Randomize points</button>
+	<!-- <button id="buttonDecluster" onclick="removeClustering();">De-cluster</button> -->
+
+	<!-- CLUSTER SLIDER -->
+	<div class="slider-container">
+		<span># Clusters</span>
+		<input type="range" name="slider-clusters" min="0" max="14" value="0" class="slider" id="clusters-slider" onmouseup="clusterInput();" oninput="updateClusterLabel();">
+		<label id="clusters-label">0</label>
+	</div>
+	<!-- FRAMERATE SLIDER -->
+	<div class="slider-container">
+		<span>Framerate</span>
+		<input type="range" name="framerate-clusters" min="1" max="61" step="10" value="60" class="slider" id="framerate-slider" oninput="let sliderFR = document.getElementById('framerate-slider'); document.getElementById('framerate-label').innerHTML = sliderFR.value; changeFramerate(sliderFR.value);">
+		<label id="framerate-label">60</label>
+	</div>
+
+	<!-- LOAD AND SAVE BUTTONS -->
+	<input type="file" name="file-open" id="file-open" value="Import">
+	<button id="file-save">Export...</button>
+
+
+	<script type="text/javascript" src="save.js"></script>
+</body>
+</html>
