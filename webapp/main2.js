@@ -7,8 +7,12 @@ function setup() {
 	canvas.parent('canvas')
 }
 
+
+
 function draw() {
 	background(51)
+	drawFramerateBar()
+	
 	push()
 	fill(200)
 	rect(width*0.55,height*0.05,width*0.40,height*0.90)//rect(width*0.5,height*0.9, width*0.5, height*1)

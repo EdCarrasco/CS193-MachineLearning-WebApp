@@ -14,14 +14,87 @@ function generatePoints(num,xrange,yrange) {
 	let xmax = floor(width*xrange)
 	let ymax = floor(height*yrange)
 	for (let i = 0; i < num; i++) {
-		let x = floor(random()*1000)%xmax
-		let y = floor(random()*1000)%ymax
-
+		//let x = floor(random()*1000)%width
+		//let y = floor(random()*1000)%height
+		let x = randomBounded(0,width)
+		let y = randomBounded(0,height)
 		let p = createVector(x, y)
 		let node = new Node(p, 0)
 		//console.log(node)
 		nodes.push(node)
 	}
+}
+
+function generatePointsClustered(numPoints, numClusters, noise) {
+	noise = (noise != null) ? noise : NOISE
+	console.log("noise: "+noise)
+	// generate some clusters
+	tempClusters = []
+	for (let i = 0; i < numClusters; i++) {
+		//let x = floor(random()*1000)%width
+		//let y = floor(random()*1000)%height
+		let x = randomBounded(0,width)
+		let y = randomBounded(0,height)
+		let p = createVector(x,y)
+		let node = new Node(p, 0, true)
+		tempClusters.push(node)
+	}
+
+	// generate points around clusters
+	nodes = []
+	let numNoisePoints = floor(numPoints*noise)
+	let numPointsPerCluster = floor((numPoints-numNoisePoints)/numClusters)
+	
+	//console.log(w + " " + h)
+	//background(255)
+	for (let k = 0; k < tempClusters.length; k++) {
+		let halfwidth = (width/numClusters) * 0.5
+		let halfheight = (height/numClusters) * 0.5
+		for (let j = 0; j < numPointsPerCluster; j++) {
+			let xmin = max(0, tempClusters[k].position.x-halfwidth)
+			let xmax = min(width, tempClusters[k].position.x+halfwidth)
+			let ymin = max(0, tempClusters[k].position.y-halfheight)
+			let ymax = min(height, tempClusters[k].position.y+halfheight)
+			let x = randomBounded(xmin,xmax)
+			let y = randomBounded(ymin,ymax)
+			let p = createVector(x,y)
+			let node = new Node(p, 0)
+			nodes.push(node)
+			if (j==0 && k==0) {
+				console.log(tempClusters)
+				console.log(xmax)
+			}
+
+			// increase half width and height by % of half the max width or max height
+			// divide half max width by numPointsPerCluster
+			let widthIncrease = (width*0.5)/numPointsPerCluster
+			let heightIncrease = (height*0.5)/numPointsPerCluster
+			halfwidth += widthIncrease * (1 - CLUSTERING_FACTOR)
+			halfheight += heightIncrease * (1 - CLUSTERING_FACTOR)
+		}
+	}
+
+	// generate noise
+	for (let i = 0; i < numNoisePoints; i++) {
+		let x = randomBounded(0,width)
+		let y = randomBounded(0,height)
+		let p = createVector(x, y)
+		let node = new Node(p, 0)
+		nodes.push(node)
+	}
+}
+
+function randomBounded(min,max) {
+	return floor(random()*1000) % (max - min + 1) + min
+}
+
+function mapPoint(point, xmin,xmax, ymin,ymax) {
+	let new_xmin = width*0.05
+	let new_xmax = width*0.95
+	let new_ymin = height*0.05
+	let new_ymax = height*0.95
+	let x = map(point.x, xmin, xmax, new_xmin, new_xmax)
+	let y = map(point.x, ymin, ymax, new_ymin, new_ymax)
 }
 
 function startClustering(num) {
@@ -60,6 +133,7 @@ function setK(kval) {
 	knn = kval
 }
 
+/*==================================================*/
 // OPEN FILE
 
 function handleFileSelect(event) {
@@ -134,53 +208,42 @@ function arrayToNodes(array) {
 	}
 }
 
-// SAVE FILE
-
-function nodesToArray() {
-	console.log("convertNodesToArray()...")
-	let array = []
-	for (let node of nodes) {
-		let row = []
-		row.push(node.position.x)
-		row.push(node.position.y)
-		row.push(node.nodeclass)
-		array.push(row)
-	}
-	return array
-}
-
-function arrayToString(array) {
-	let string = ''
-	array.forEach(function(value) {
-		string += value.join(' ') + '\n'
-	})
-	return string
-}
-
-function saveArrayAsTextFile(array) {
-	console.log("saveArrayAsTextFile()...")
-	let fs = require('fs')
-	let file = fs.createWriteStream('sample.txt')
-	file.on('error', function(error) { alert("Cannot create file.")})
-	array.forEach(function(value) {
-		file.write(value.join(' ') + '\n')
-	})
-	file.end()
-	console.log("saved file successfully!")
-}
-
 function changeFramerate(fr) {
-	FRAMERATE = parseInt(fr)
+  FRAMERATE = parseInt(fr)
 }
 
 function clusterInput() {
-	let slider = document.getElementById('clusters-slider'); 
-	//document.getElementById('clusters-label').innerHTML = slider.value; 
-	console.log("clusters " + slider.value)
-	startClustering(slider.value);
+  let slider = document.getElementById('clusters-slider'); 
+  //document.getElementById('clusters-label').innerHTML = slider.value; 
+  console.log("clusters " + slider.value)
+  startClustering(slider.value);
 }
 
 function updateClusterLabel() {
-	let slider = document.getElementById('clusters-slider'); 
-	document.getElementById('clusters-label').innerHTML = slider.value; 
+  let slider = document.getElementById('clusters-slider'); 
+  document.getElementById('clusters-label').innerHTML = slider.value; 
+}
+
+function drawFramerateBar() {
+  let fr = frameRate()
+  console.log(fr)
+  fr = map(fr, 0,70, 0,width)
+  push()
+  strokeWeight(1)
+  line(0,1, fr,1)
+  pop()
+}
+
+function noiseInput() {
+	let slider = document.getElementById('slider-noise')
+	let label = document.getElementById('label-noise')
+	label.innerHTML = slider.value
+	NOISE = slider.value
+}
+
+function clusteringFactorInput() {
+	let slider = document.getElementById('slider-clustering-factor')
+	let label = document.getElementById('label-clustering-factor')
+	label.innerHTML = slider.value
+	CLUSTERING_FACTOR = slider.value
 }

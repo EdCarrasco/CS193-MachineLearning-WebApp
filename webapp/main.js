@@ -15,25 +15,9 @@ function setup() {
 	document.getElementById('file-open').addEventListener('change', handleFileSelect, false)
 }
 
-
-
-/*function generatePoints(num,xrange,yrange) {
-	nodes = []
-	let xmax = floor(width*xrange)
-	let ymax = floor(height*yrange)
-	for (let i = 0; i < num; i++) {
-		let x = floor(random()*1000)%xmax
-		let y = floor(random()*1000)%ymax
-
-		let p = createVector(x, y)
-		let node = new Node(p, 0)
-		//console.log(node)
-		nodes.push(node)
-	}
-}*/
-
 function draw() {
 	background(200)
+	//drawFramerateBar()
 	frameRate(FRAMERATE)
 	
 
@@ -101,6 +85,17 @@ function draw() {
 		}
 	}
 
-	text("framerate: "+floor(getFrameRate()), 1,11)
+	push()
+	text("framerate: "+floor(getFrameRate()), 2,11)
+	text("# nodes: "+nodes.length, 2, 25)
+	pop()
+
+	for (let k = 0; k < tempClusters.length; k++) {
+		push()
+		translate(tempClusters[k].position)
+		fill('black')
+		ellipse(0,0,5)
+		pop()
+	}
 }
 

@@ -6,6 +6,7 @@ class Node {
 		this.color = 'black'
 		this.isCluster = isCluster | false
 		this.nodeChildren = []
+		this.radius = 10
 	}
 
 	distanceTo(position) {
@@ -47,7 +48,7 @@ class Node {
 			text(this.nodeChildren.length,0,0)
 		} else {
 			noStroke()
-			ellipse(0, 0, 15)
+			ellipse(0, 0, this.radius)
 		}
 		pop()
 	}

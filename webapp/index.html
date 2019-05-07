@@ -41,7 +41,22 @@
 	<button id="button2" onclick="setK(1000);">ALL</button>
 	
 	<!-- NODE BUTTONS -->
-	<button id="buttonGenerate" onclick="generatePoints(1000,1,1);">Randomize points</button>
+	<br/>
+	<button id="buttonGenerate" onclick="generatePoints(1000,1,1);">Randomize points (uniform)</button>
+	<br/>
+	<button id="buttonGenerateClustered" onclick="generatePointsClustered(1000, 20);">Randomize points (clustered)</button>
+	<!-- NOISE SLIDER -->
+	<div class="slider-container">
+		<span>Noise</span>
+		<input type="range" name="slider-noise" min="0" max="1" step="0.01" value="0.2" class="slider" id="slider-noise" onmouseup="noiseInput();" oninput="noiseInput();">
+		<label id="label-noise">0.2</label>
+	</div>
+	<!-- CLUSTERING FACTOR SLIDER -->
+	<div class="slider-container">
+		<span>Clustering</span>
+		<input type="range" name="slider-clustering-factor" min="0" max="1" step="0.01" value="1" class="slider" id="slider-clustering-factor" onmouseup="clusteringFactorInput();" oninput="clusteringFactorInput();">
+		<label id="label-clustering-factor">1</label>
+	</div>
 	<!-- <button id="buttonDecluster" onclick="removeClustering();">De-cluster</button> -->
 
 	<!-- CLUSTER SLIDER -->
@@ -56,6 +71,7 @@
 		<input type="range" name="framerate-clusters" min="1" max="61" step="10" value="60" class="slider" id="framerate-slider" oninput="let sliderFR = document.getElementById('framerate-slider'); document.getElementById('framerate-label').innerHTML = sliderFR.value; changeFramerate(sliderFR.value);">
 		<label id="framerate-label">60</label>
 	</div>
+	<br/>
 
 	<!-- LOAD AND SAVE BUTTONS -->
 	<input type="file" name="file-open" id="file-open" value="Import">
