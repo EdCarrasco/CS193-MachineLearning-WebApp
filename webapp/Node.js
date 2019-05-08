@@ -1,11 +1,13 @@
 class Node {
-	constructor(position, nodeclass, isCluster) {
+	constructor(position, nodeclass, type='DATA') {
 		this.position = position
+		this.prevposition = position
 		this.nodeclass = nodeclass
 		this.distance = 0
 		this.color = 'black'
-		this.isCluster = isCluster | false
+		this.type = type
 		this.nodeChildren = []
+		this.nodeParent = null
 		this.radius = 10
 	}
 
@@ -14,7 +16,9 @@ class Node {
 	}
 
 	update() {
+		// TODO: UPDATE DISTANCE TO MOUSE ONLY WHEN MOUSE HAS MOVED
 		this.distance = dist(mouseX, mouseY, this.position.x, this.position.y)
+
 		switch(this.nodeclass) {
 			case 0: this.color = 'white'; break;
 			case 1: this.color = 'red'; break;
@@ -39,16 +43,21 @@ class Node {
 		push()
 		translate(this.position)
 		fill(this.color)
-		if (this.isCluster) {
+		if (this.type == 'CLUSTER') {
 			rectMode(CENTER)
 			rect(0,0, 20,20)
 			fill('black')
 
 			textAlign(CENTER,CENTER)
+			textSize(10)
 			text(this.nodeChildren.length,0,0)
-		} else {
+		} else if (this.type == 'DATA') {
 			noStroke()
 			ellipse(0, 0, this.radius)
+		} else if (this.type == 'TEMP') {
+			noStroke()
+			fill('black')
+			ellipse(0,0, 5)
 		}
 		pop()
 	}

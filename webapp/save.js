@@ -68,28 +68,3 @@ function saveArrayAsTextFile(array) {
   console.log("saved file successfully!")
 }
 
-function changeFramerate(fr) {
-  FRAMERATE = parseInt(fr)
-}
-
-function clusterInput() {
-  let slider = document.getElementById('clusters-slider'); 
-  //document.getElementById('clusters-label').innerHTML = slider.value; 
-  console.log("clusters " + slider.value)
-  startClustering(slider.value);
-}
-
-function updateClusterLabel() {
-  let slider = document.getElementById('clusters-slider'); 
-  document.getElementById('clusters-label').innerHTML = slider.value; 
-}
-
-function drawFramerateBar() {
-  let fr = frameRate()
-  console.log(fr)
-  fr = map(fr, 0,70, 0,width)
-  push()
-  strokeWeight(1)
-  line(0,1, fr,1)
-  pop()
-}

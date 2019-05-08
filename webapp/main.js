@@ -1,50 +1,44 @@
+let nodeManager = null
+let buttonProcessNext = null
+let buttonProcessReset = null
 
 function setup() {
 	let canvas = createCanvas(640, 380)
-	//let canvas2 = createCanvas(100,100)
 	canvas.parent('canvas-container')
-	//canvas2.parent('canvas2')
-
-	/*tests = []
-	tests.push(new Test(5))
-	tests.push(new Test(3))
-	tests.push(new Test(2))
-	tests.push(new Test(6))
-	tests.sort((a,b) => (a.num > b.num) ? 1 : -1)*/
-
 	document.getElementById('file-open').addEventListener('change', handleFileSelect, false)
+	buttonProcessNext = document.getElementById('button-process-next')
+	buttonProcessReset = document.getElementById('button-process-reset')
+
+	nodeManager = new NodeManager()
+}
+
+function buttonProcessNextFunc() {
+	let enabled = (nodeManager.nodes.length > 0) && nodeManager.hasMoved
+	buttonProcessNext.disabled = !enabled
+}
+
+function updateClusteringNoiseLabel() {
+	let slider = document.getElementById('slider-noise')
+	let label = document.getElementById('label-noise')
+	label.innerHTML = round(slider.value * 100) + "%"
 }
 
 function draw() {
 	background(200)
-	//drawFramerateBar()
 	frameRate(FRAMERATE)
+
+	buttonProcessNextFunc()
+	buttonProcessNext.innerHTML = "Next (current: " + nodeManager.currentStep + ")"
+	buttonProcessReset.disabled = (nodeManager.currentStep == 0) ? true : false
+
+	updateClusteringNoiseLabel()
+
+	nodeManager.update()
+	nodeManager.runClustering()
+	nodeManager.draw()
+
 	
 
-	for (let i = 0; i < nodes.length; i++) {
-		nodes[i].update()
-		nodes[i].draw()
-	}
-
-	for (let i = 0; i < clusterNodes.length; i++) {
-		clusterNodes[i].update()
-	}
-
-	let mousePos = createVector(mouseX,mouseY)
-	nodes.sort((a,b) => (a.distanceTo(mousePos) > b.distanceTo(mousePos)) ? 1 : -1)
-	let max = min(nodes.length, knn) // k nearest neighbors
-	let winnerClass = 0
-	for (let i = 0; i < max; i++) {
-		push()
-		stroke(nodes[i].color)
-		strokeWeight(1)
-		line(mouseX, mouseY, nodes[i].position.x, nodes[i].position.y)
-		pop()
-	}
-
-	for (let i = 0; i < clusterNodes.length; i++) {
-		clusterNodes[i].draw()
-	}
 
 	/*if (clusterNodes.length < 1) {
 		for (let node of nodes) {
@@ -53,6 +47,27 @@ function draw() {
 		return
 	}*/
 
+	let pos = createVector(mouseX,mouseY)
+	nodeManager.findKNN(pos)
+	nodeManager.runClustering()
+
+	drawDebugText()
+	drawTempClusters()
+}
+
+/*function findKNN(pos) {
+	nodes.sort((a,b) => (a.distanceTo(pos) > b.distanceTo(pos)) ? 1 : -1)
+	let numKNN = min(nodes.length, knn) // k nearest neighbors
+	for (let i = 0; i < numKNN; i++) {
+		push()
+		stroke(nodes[i].color)
+		strokeWeight(1)
+		line(pos.x, pos.y, nodes[i].position.x, nodes[i].position.y)
+		pop()
+	}
+}
+
+function runClustering() {
 	if (clustering == true && nodes.length > 0 && clusterNodes.length > 0) {
 		for (let j = 0; j < clusterNodes.length; j++) {
 			clusterNodes[j].nodeChildren = []
@@ -84,12 +99,24 @@ function draw() {
 			clusterNodes[j].position = createVector(xaverage,yaverage)
 		}
 	}
+}*/
 
+function drawDebugText() {
 	push()
-	text("framerate: "+floor(getFrameRate()), 2,11)
-	text("# nodes: "+nodes.length, 2, 25)
+	let x = 2
+	let y = 11
+	text("framerate: "+floor(getFrameRate()), x, y)
+	y += 15
+	text("# nodes: "+nodeManager.nodes.length, x, y)
+	y += 15
+	text("hasMoved: "+nodeManager.hasMoved, x, y)
+	y += 15
+	text("isProcessPlaying: "+nodeManager.isProcessPlaying, x, y)
+	y += 15
 	pop()
+}
 
+function drawTempClusters() {
 	for (let k = 0; k < tempClusters.length; k++) {
 		push()
 		translate(tempClusters[k].position)
@@ -98,4 +125,3 @@ function draw() {
 		pop()
 	}
 }
-

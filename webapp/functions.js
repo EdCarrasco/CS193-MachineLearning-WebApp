@@ -3,13 +3,32 @@ function mousePressed() {
 		return
 	}
 	let p = createVector(mouseX, mouseY)
-	let node = new Node(p, currentClass)
-	nodes.push(node)
+	let node = new Node(p, nodeManager.currentClass)
+	nodeManager.nodes.push(node)
 
-	
+	nodeManager.restartProcessLoop()
+}
+
+function processPlay() {
+	nodeManager.processPlay()
+}
+
+function processPause() {
+	nodeManager.processPause()
+}
+
+function processNext() {
+	nodeManager.processNext()
+	let button = document.getElementById('button-process-next')
+	let step = nodeManager.currentStep + 1
+	button.innerHTML = "Next (" + step + ")"
 }
 
 function generatePoints(num,xrange,yrange) {
+	nodeManager.generatePointsUniform(num,xrange,yrange)
+	nodeManager.restartProcessLoop()
+}
+/*function generatePoints(num,xrange,yrange) {
 	nodes = []
 	let xmax = floor(width*xrange)
 	let ymax = floor(height*yrange)
@@ -23,9 +42,14 @@ function generatePoints(num,xrange,yrange) {
 		//console.log(node)
 		nodes.push(node)
 	}
+}*/
+
+function generatePointsClustered(numPoints, numClusters) {
+	nodeManager.generatePointsClustered(numPoints,numClusters)
+	nodeManager.restartProcessLoop()
 }
 
-function generatePointsClustered(numPoints, numClusters, noise) {
+/*function generatePointsClustered(numPoints, numClusters, noise) {
 	noise = (noise != null) ? noise : NOISE
 	console.log("noise: "+noise)
 	// generate some clusters
@@ -82,7 +106,7 @@ function generatePointsClustered(numPoints, numClusters, noise) {
 		let node = new Node(p, 0)
 		nodes.push(node)
 	}
-}
+}*/
 
 function randomBounded(min,max) {
 	return floor(random()*1000) % (max - min + 1) + min
@@ -97,7 +121,8 @@ function mapPoint(point, xmin,xmax, ymin,ymax) {
 	let y = map(point.x, ymin, ymax, new_ymin, new_ymax)
 }
 
-function startClustering(num) {
+
+/*function startClustering(num) {
 	clusterNodes = []
 
 	
@@ -123,14 +148,13 @@ function removeClustering() {
 		nodes[i].nodeclass = 0
 	}
 }
-
-function setClass(i) {
-	currentClass = i
+*/
+function setClass(nodeclass) {
+	nodeManager.setClass(nodeclass)
 }
 
-function setK(kval) {
-	//if (kval > nodes.length) kval = nodes.length
-	knn = kval
+function setK(k) {
+	nodeManager.setK(k)
 }
 
 /*==================================================*/
@@ -174,7 +198,7 @@ function processData(csv) {
 }
 
 function arrayToNodes(array) {
-	nodes = []
+	let _nodes = []
 
 	// Find xmin, xmax, ymin, ymax
 	let xmin = Infinity, ymin = Infinity
@@ -204,8 +228,11 @@ function arrayToNodes(array) {
 
 		let p = createVector(x,y)
 		let node = new Node(p, nodeclass)
-		nodes.push(node)
+		_nodes.push(node)
 	}
+
+	// TODO: RETURN NODES INSTEAD
+	nodeManager.nodes = _nodes
 }
 
 function changeFramerate(fr) {
@@ -213,10 +240,9 @@ function changeFramerate(fr) {
 }
 
 function clusterInput() {
-  let slider = document.getElementById('clusters-slider'); 
-  //document.getElementById('clusters-label').innerHTML = slider.value; 
-  console.log("clusters " + slider.value)
-  startClustering(slider.value);
+  let slider = document.getElementById('clusters-slider');
+  nodeManager.setClusters(slider.value)
+  //nodeManager.initializeClusters(slider.value)
 }
 
 function updateClusterLabel() {
@@ -236,14 +262,14 @@ function drawFramerateBar() {
 
 function noiseInput() {
 	let slider = document.getElementById('slider-noise')
-	let label = document.getElementById('label-noise')
-	label.innerHTML = slider.value
-	NOISE = slider.value
+	//let label = document.getElementById('label-noise')
+	//label.innerHTML = round(slider.value * 100) + "%"
+	nodeManager.setClusteringNoise(slider.value)
 }
 
 function clusteringFactorInput() {
 	let slider = document.getElementById('slider-clustering-factor')
 	let label = document.getElementById('label-clustering-factor')
 	label.innerHTML = slider.value
-	CLUSTERING_FACTOR = slider.value
+	nodeManager.setClusteringFactor(slider.value)
 }

@@ -18,12 +18,14 @@ Finished:
 - sliders for clustering and framerate
 - load from file
 - save to file
+- better data randomization (that is not uniformly distributed)
 
 Working on:
 - scale data to fit within canvas
+- improve load and save file to preserve data positions
 
 Todo:
-- better data randomization (that is not uniformly distributed)
+
 - step-by-step mode (similar to one in Zybooks)
 - add tooltips on mouseover to show helpful information
 - add content to webpage besides webapp 
@@ -40,6 +42,7 @@ STEP 2: highlight closest line to cluster
 STEP 3: color the points
 STEP 4: move the cluster centers
 
+SPECTRAL CLUSTERING
 
 
 */

@@ -39,6 +39,12 @@
 	<button id="button1" onclick="setK(3);">3</button>
 	<button id="button2" onclick="setK(7);">7</button>
 	<button id="button2" onclick="setK(1000);">ALL</button>
+	<span>--</span>
+	<!-- STEP-BY-STEP BUTTONS -->
+	<button onclick="processPlay();">Play</button>
+	<button onclick="processPause();">Pause</button>
+	<button id="button-process-next" onclick="processNext();">Next</button>
+	<button id="button-process-reset" onclick="nodeManager.resetClustering();">Reset</button>
 	
 	<!-- NODE BUTTONS -->
 	<br/>
@@ -62,8 +68,8 @@
 	<!-- CLUSTER SLIDER -->
 	<div class="slider-container">
 		<span># Clusters</span>
-		<input type="range" name="slider-clusters" min="0" max="14" value="0" class="slider" id="clusters-slider" onmouseup="clusterInput();" oninput="updateClusterLabel();">
-		<label id="clusters-label">0</label>
+		<input type="range" name="slider-clusters" min="0" max="14" value="5" class="slider" id="clusters-slider" onmouseup="clusterInput();" oninput="updateClusterLabel();">
+		<label id="clusters-label">5</label>
 	</div>
 	<!-- FRAMERATE SLIDER -->
 	<div class="slider-container">
