@@ -3,6 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<title>Cluster 1</title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 	<script type="text/javascript" src="p5.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
 
@@ -10,8 +12,8 @@
 	<script type="text/javascript" src="functions.js"></script>
 	<script type="text/javascript" src="Node.js"></script>
 	<script type="text/javascript" src="NodeManager.js"></script>
-	
 	<script type="text/javascript" src="main.js"></script>
+
 	<style type="text/css">
 		.red {
 			background-color: rgb(255,100,100);
@@ -24,6 +26,14 @@
 		}
 		.slider {
 			margin-top: 10px;
+		}
+		.button-row {
+			display: flex;
+			align-items: center;
+			padding-top: 0.4em;
+		}
+		.button-row span, .button-row button {
+			margin-right: 0.4em;
 		}
 	</style>
 </head>
@@ -40,17 +50,26 @@
 	<button id="button2" onclick="setK(7);">7</button>
 	<button id="button2" onclick="setK(1000);">ALL</button>
 	<span>--</span>
-	<!-- STEP-BY-STEP BUTTONS -->
-	<button onclick="processPlay();">Play</button>
-	<button onclick="processPause();">Pause</button>
-	<button id="button-process-next" onclick="processNext();">Next</button>
-	<button id="button-process-reset" onclick="nodeManager.resetClustering();">Reset</button>
-	
-	<!-- NODE BUTTONS -->
+	<!-- ALGORITHM BUTTONS -->
 	<br/>
-	<button id="buttonGenerate" onclick="generatePoints(1000,1,1);">Randomize points (uniform)</button>
-	<br/>
-	<button id="buttonGenerateClustered" onclick="generatePointsClustered(1000, 20);">Randomize points (clustered)</button>
+	<div>
+		<div style="padding-top: 10px;">
+			<span>K-Means Algorithm</span>
+			<button title="Autoplay" onclick="processPlay();"><i class="material-icons" style="padding-top: 2px;">play_arrow</i></button>
+
+			<button title="Pause" onclick="processPause();"><i class="material-icons" style="padding-top: 2px;">pause</i></button>
+
+			<button title="Next step" id="button-process-next" onclick="processNext();"><i class="material-icons" style="padding-top: 2px;">redo</i></button>
+
+			<button title="Start over" id="button-process-reset" onclick="nodeManager.resetClustering();"><i class="material-icons" style="padding-top: 2px;">fast_rewind</i></button>
+		</div>
+		<div class="button-row">
+			<span>Data points</span>
+			<button style="height:34px;" id="buttonGenerateClustered" onclick="generatePointsClustered(300, 20);"><strong>Randomize</strong></button>
+
+			<button onclick="setClass(0);"><i class="material-icons" style="padding-top: 2px;">create</i></button>
+		</div>
+	</div>
 	<!-- NOISE SLIDER -->
 	<div class="slider-container">
 		<span>Noise</span>
@@ -71,17 +90,21 @@
 		<input type="range" name="slider-clusters" min="0" max="14" value="5" class="slider" id="clusters-slider" onmouseup="clusterInput();" oninput="updateClusterLabel();">
 		<label id="clusters-label">5</label>
 	</div>
-	<!-- FRAMERATE SLIDER -->
+	<!-- FRAMERATE SLIDER 
 	<div class="slider-container">
 		<span>Framerate</span>
 		<input type="range" name="framerate-clusters" min="1" max="61" step="10" value="60" class="slider" id="framerate-slider" oninput="let sliderFR = document.getElementById('framerate-slider'); document.getElementById('framerate-label').innerHTML = sliderFR.value; changeFramerate(sliderFR.value);">
 		<label id="framerate-label">60</label>
 	</div>
-	<br/>
+	
+	-->
 
 	<!-- LOAD AND SAVE BUTTONS -->
+	<br/>
 	<input type="file" name="file-open" id="file-open" value="Import">
 	<button id="file-save">Export...</button>
+
+	<p>TEXT</p>
 
 
 	<script type="text/javascript" src="save.js"></script>

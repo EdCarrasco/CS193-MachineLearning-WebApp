@@ -12,6 +12,11 @@ let tempClusters = []
 let NOISE = 0.2
 let CLUSTERING_FACTOR = 1
 
+let nodeManager = null
+let buttonProcessNext = null
+let buttonProcessReset = null
+let stepManager = null
+
 /*
 
 Finished:
@@ -19,14 +24,16 @@ Finished:
 - load from file
 - save to file
 - better data randomization (that is not uniformly distributed)
+- step-by-step mode (similar to one in Zybooks)
+- improve step-by-step mode
+
 
 Working on:
 - scale data to fit within canvas
 - improve load and save file to preserve data positions
 
 Todo:
-
-- step-by-step mode (similar to one in Zybooks)
+- show pseudo-code for each step
 - add tooltips on mouseover to show helpful information
 - add content to webpage besides webapp 
   (written content like paragraphs that explain how the algorithm works)
@@ -42,7 +49,8 @@ STEP 2: highlight closest line to cluster
 STEP 3: color the points
 STEP 4: move the cluster centers
 
-SPECTRAL CLUSTERING
+Further reading:
+- SPECTRAL CLUSTERING
 
 
 */

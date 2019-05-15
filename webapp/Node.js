@@ -1,48 +1,52 @@
 class Node {
-	constructor(position, nodeclass, type='DATA') {
+	constructor(position, nodeclass, type='DATA', radius=5, label='') {
 		this.position = position
 		this.prevposition = position
 		this.nodeclass = nodeclass
 		this.distance = 0
-		this.color = 'black'
+		this.colour = 'black'
 		this.type = type
 		this.nodeChildren = []
 		this.nodeParent = null
-		this.radius = 10
+		this.radius = radius
+		this.label = label
+
+		this.setClass(nodeclass)
 	}
 
 	distanceTo(position) {
 		return dist(this.position.x,this.position.y, position.x,position.y)
 	}
 
-	update() {
-		// TODO: UPDATE DISTANCE TO MOUSE ONLY WHEN MOUSE HAS MOVED
-		this.distance = dist(mouseX, mouseY, this.position.x, this.position.y)
-
+	setClass(nodeclass) {
+		this.nodeclass = nodeclass
 		switch(this.nodeclass) {
-			case 0: this.color = 'white'; break;
-			case 1: this.color = 'red'; break;
-			case 2: this.color = 'green'; break;
-			case 3: this.color = 'blue'; break;
-			case 4: this.color = 'yellow'; break;
-			case 5: this.color = 'darkblue'; break;
-			case 6: this.color = 'brown'; break;
-			case 7: this.color = 'orange'; break;
-			case 8: this.color = 'purple'; break;
-			case 9: this.color = 'lightblue'; break;
-			case 10: this.color = 'lightgreen'; break;
-			case 11: this.color = 'pink'; break;
-			case 12: this.color = color(255, 90, 0); break;
-			case 13: this.color = color(204, 102, 153); break;
-			case 14: this.color = color(102, 102, 153); break;
-			default: this.color = 'black'; break;
+			case 0: this.colour = 'white'; break;
+			case 1: this.colour = 'red';break;
+			case 2: this.colour = 'green'; break;
+			case 3: this.colour = 'blue'; break;
+			case 4: this.colour = 'yellow'; break;
+			case 5: this.colour = 'darkblue'; break;
+			case 6: this.colour = 'brown'; break;
+			case 7: this.colour = 'orange'; break;
+			case 8: this.colour = 'purple'; break;
+			case 9: this.colour = 'lightblue'; break;
+			case 10: this.colour = 'lightgreen'; break;
+			case 11: this.colour = 'pink'; break;
+			case 12: this.colour = color(255, 90, 0); break;
+			case 13: this.colour = color(204, 102, 153); break;
+			case 14: this.colour = color(102, 102, 153); break;
+			default: this.colour = 'black'; break;
 		}
+	}
+
+	update() {
 	}
 
 	draw() {
 		push()
 		translate(this.position)
-		fill(this.color)
+		fill(this.colour)
 		if (this.type == 'CLUSTER') {
 			rectMode(CENTER)
 			rect(0,0, 20,20)
@@ -59,6 +63,16 @@ class Node {
 			fill('black')
 			ellipse(0,0, 5)
 		}
+		pop()
+
+		this.drawLabel()
+	}
+
+	drawLabel() {
+		push()
+		translate(this.position)
+		textAlign(CENTER,CENTER)
+		text(this.label, 0,0)
 		pop()
 	}
 }

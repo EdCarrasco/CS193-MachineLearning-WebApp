@@ -1,8 +1,11 @@
+
 class NodeManager {
-	constructor() {
+	constructor(node_radius=5) {
 		this.nodes = []
 		this.clusters = []
 		this.tempClusters = []
+		this.node_radius = node_radius
+		this.allowsNewPoints = false
 
 		this.k = 3
 		this.numClusters = 5
@@ -66,7 +69,7 @@ class NodeManager {
 		let k = min(this.nodes.length, this.k)
 		for (let i = 0; i < k; i++) {
 			push()
-			stroke(this.nodes[i].color)
+			stroke(this.nodes[i].colour)
 			strokeWeight(1)
 			line(position.x, position.y, this.nodes[i].position.x, this.nodes[i].position.y)
 			pop()
@@ -85,10 +88,11 @@ class NodeManager {
 			let x = randomBounded(0,width)
 			let y = randomBounded(0,height)
 			let point = createVector(x, y)
-			let nodeclass = 0
-			let node = new Node(point, nodeclass)
+			let node = new Node(point, 0, 'DATA', this.node_radius, i+1)
+			node.setClass(i+1)
 			this.nodes.push(node)
 		}
+		console.log(this.nodes.length)
 	}
 
 	generatePointsClustered(numPoints, numClusters) {
@@ -98,7 +102,7 @@ class NodeManager {
 			let x = randomBounded(0,width)
 			let y = randomBounded(0,height)
 			let point = createVector(x,y)
-			let node = new Node(point, 0, 'TEMP')
+			let node = new Node(point, 0, 'TEMP', this.node_radius)
 			this.tempClusters.push(node)
 		}
 
@@ -106,6 +110,8 @@ class NodeManager {
 		this.nodes = []
 		let numNoisePoints = floor(numPoints*this.clusteringNoise)
 		let numPointsPerCluster = floor((numPoints-numNoisePoints)/numClusters)
+		numNoisePoints += (numPoints-numNoisePoints)%numClusters // add leftovers to noise
+
 		for (let k = 0; k < this.tempClusters.length; k++) {
 			let halfwidth = (width/numClusters) * 0.5
 			let halfheight = (height/numClusters) * 0.5
@@ -118,7 +124,7 @@ class NodeManager {
 				let x = randomBounded(xmin,xmax)
 				let y = randomBounded(ymin,ymax)
 				let p = createVector(x,y)
-				let node = new Node(p, 0)
+				let node = new Node(p, 0, 'DATA', this.node_radius)
 				this.nodes.push(node)
 
 				// increase half width and height by % of half the max width or max height
@@ -136,7 +142,7 @@ class NodeManager {
 			let x = randomBounded(0,width)
 			let y = randomBounded(0,height)
 			let point = createVector(x, y)
-			let node = new Node(point, 0)
+			let node = new Node(point, 0, 'DATA', this.node_radius)
 			this.nodes.push(node)
 		}
 	}
@@ -164,13 +170,14 @@ class NodeManager {
 		this.isClustering = false
 		this.clusters = []
 		for (let node of this.nodes) {
-			node.nodeclass = 0
+			//node.nodeclass = 0
+			node.setClass(0)
 		}
 		this.currentStep = 0
 	}
 
 	matchNodesWithClusters() {
-		console.log("this.clusters.length: "+this.clusters.length)
+		//console.log("this.clusters.length: "+this.clusters.length)
 		// STEP 1: each point finds distance to each cluster center
 		for (let i = 0; i < this.nodes.length; i++) {
 			let smallestDistance = Infinity
@@ -194,7 +201,8 @@ class NodeManager {
 			//console.log(k)
 			//this.clusters[k].nodeChildren.push(this.nodes[i])
 			this.nodes[i].nodeParent.nodeChildren.push(this.nodes[i])
-			this.nodes[i].nodeclass = this.nodes[i].nodeParent.nodeclass
+			//this.nodes[i].nodeclass = this.nodes[i].nodeParent.nodeclass
+			this.nodes[i].setClass(this.nodes[i].nodeParent.nodeclass)
 		}
 	}
 
@@ -236,11 +244,12 @@ class NodeManager {
 		this.clusters = []
 		for (let node of this.nodes) {
 			node.nodeParent = null
-			node.nodeclass = 0
+			node.setClass(0)
 		}
 		this.currentStep = 0
 		this.hasMoved = true
 		this.isProcessPlaying = false
+		stepManager.highlightVisible = false
 	}
 
 	processPause() {
@@ -259,22 +268,28 @@ class NodeManager {
 			case 0:
 				// first step. wait for button press to actually start
 				if (this.isProcessPlaying) this.processNext()
+				if (stepManager) stepManager.highlightVisible = false
 				break
 			case 1:
+				stepManager.setIndex(0)
 				this.initializeClusters()
+				stepManager.highlightVisible = true
 				this.processNext()
 				break
 			case 2:
 				if (this.isProcessPlaying) this.processNext()
 				break;
 			case 3:
+				stepManager.setIndex(1)
 				this.matchNodesWithClusters()
+				//console.log("case 3")
 				this.processNext()
 				break
 			case 4:
 				if (this.isProcessPlaying) this.processNext()
 				break
 			case 5:
+				stepManager.setIndex(2)
 				this.moveClusterCenters()
 				this.processNext()
 				break
@@ -282,6 +297,7 @@ class NodeManager {
 				if (this.isProcessPlaying) this.processNext()
 				break
 			case 7:
+				stepManager.setIndex(3)
 				this.checkClusterMovement()
 				this.processNext()
 				break
@@ -302,7 +318,7 @@ class NodeManager {
 
 	processNext() {
 		let loopEnd = 8		// last step that is part of the loop
-		let loopStart = 3	// first step that is part of the loop
+		let loopStart = 2	// first step that is part of the loop
 		if (this.currentStep < loopEnd) {
 			this.currentStep++
 		} else if (this.currentStep == loopEnd) {
@@ -319,17 +335,16 @@ class NodeManager {
 	}
 
 	update() {
-		for (let node of this.nodes) node.update()
-		for (let cluster of this.clusters) cluster.update()
-		for (let temp of this.tempClusters) temp.update()
-
+		//for (let node of this.nodes) node.update()
+		//for (let cluster of this.clusters) cluster.update()
+		//for (let temp of this.tempClusters) temp.update()
 		this.runClustering()
 	}
 
 	draw() {
 		for (let node of this.nodes) node.draw()
 		for (let cluster of this.clusters) cluster.draw()
-		for (let temp of this.tempClusters) temp.draw()
+		//for (let temp of this.tempClusters) temp.draw()
 
 		this.findKNN()
 	}
@@ -343,6 +358,105 @@ class NodeManager {
 				line(node.position.x, node.position.y, cluster.position.x, cluster.position.y)
 			}
 		}
+		pop()
+	}
+
+	drawLabels() {
+		for (let node of this.nodes) {
+			node.drawLabel()
+		}
+	}
+}
+
+/*******************************************************/
+
+class StepManager {
+	constructor(x,y) {
+		this.pos = createVector(x,y)
+		this.steps = []
+		this.index = 0
+		this.stepHeight = 40
+		this.width = 150
+		this.height = 30
+		this.title = "K-Means Algorithm"
+		this.yoffset = 40
+		this.highlightVisible = true
+	}
+
+	addStep(text) {
+		let x = this.pos.x + 10
+		let y = this.pos.y + this.stepHeight*this.steps.length + this.yoffset
+		let step = new Step(x,y)
+		step.setText(text)
+		this.steps.push(step)
+
+		this.height += this.stepHeight
+	}
+
+	setIndex(index) {
+		this.steps[this.index].highlight = false
+		this.index = index
+		this.steps[this.index].highlight = true
+	}
+
+	/*next() {
+		this.steps[this.index].highlight = false
+		if (this.index == 4 && this.loop) {
+			this.index = 1
+		} else if (this.index == 5) {
+			// do nothing
+		} else {
+			this.index++
+		}
+		this.steps[this.index].highlight = true
+	}*/
+
+	draw() {
+		push()
+		translate(this.pos)
+		fill('white')
+		rect(0,0, this.width, this.height)
+		pop()
+
+		for (let step of this.steps) {
+			step.draw()
+		}
+
+		push()
+		translate(this.pos)
+		textStyle(BOLD)
+		text(this.title, 10,20)
+		let y = this.yoffset - 15
+		line(10,y,this.width-10,y)
+		pop()
+	}
+}
+
+class Step {
+	constructor(x,y) {
+		this.pos = createVector(x,y)
+		this.text = ""
+		this.highlight = false
+	}
+
+	setText(text) {
+		this.text = text
+	}
+
+	draw() {
+		push()
+		translate(this.pos)
+		if (this.highlight && stepManager.highlightVisible) {
+			stroke('orange')
+			strokeWeight(5)
+			fill(0,0)
+			rect(-5,-15, 140,35) // TODO: USE VARIABLES!
+		}
+		pop()
+
+		push()
+		translate(this.pos)
+		text(this.text, 0,0)
 		pop()
 	}
 }

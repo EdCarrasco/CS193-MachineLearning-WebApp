@@ -2,11 +2,13 @@ function mousePressed() {
 	if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {
 		return
 	}
-	let p = createVector(mouseX, mouseY)
-	let node = new Node(p, nodeManager.currentClass)
-	nodeManager.nodes.push(node)
 
-	nodeManager.restartProcessLoop()
+	if (nodeManager.allowsNewPoints) {
+		let p = createVector(mouseX, mouseY)
+		let node = new Node(p, nodeManager.currentClass)
+		nodeManager.nodes.push(node)
+		nodeManager.restartProcessLoop()
+	}
 }
 
 function processPlay() {
@@ -21,11 +23,13 @@ function processNext() {
 	nodeManager.processNext()
 	let button = document.getElementById('button-process-next')
 	let step = nodeManager.currentStep + 1
-	button.innerHTML = "Next (" + step + ")"
+	//button.innerHTML = "Next (" + step + ")"
 }
 
 function generatePoints(num,xrange,yrange) {
+	console.log("generate Points Uniform")
 	nodeManager.generatePointsUniform(num,xrange,yrange)
+	clusterGraph.initialize()
 	nodeManager.restartProcessLoop()
 }
 /*function generatePoints(num,xrange,yrange) {
@@ -252,7 +256,6 @@ function updateClusterLabel() {
 
 function drawFramerateBar() {
   let fr = frameRate()
-  console.log(fr)
   fr = map(fr, 0,70, 0,width)
   push()
   strokeWeight(1)
@@ -272,4 +275,27 @@ function clusteringFactorInput() {
 	let label = document.getElementById('label-clustering-factor')
 	label.innerHTML = slider.value
 	nodeManager.setClusteringFactor(slider.value)
+}
+
+function getColour(num) {
+	let colour = null
+	switch(num) {
+		case 0: colour = 'white'; break;
+		case 1: colour = 'red';break;
+		case 2: colour = 'green'; break;
+		case 3: colour = 'blue'; break;
+		case 4: colour = 'yellow'; break;
+		case 5: colour = 'darkblue'; break;
+		case 6: colour = 'brown'; break;
+		case 7: colour = 'orange'; break;
+		case 8: colour = 'purple'; break;
+		case 9: colour = 'lightblue'; break;
+		case 10: colour = 'lightgreen'; break;
+		case 11: colour = 'pink'; break;
+		case 12: colour = color(255, 90, 0); break;
+		case 13: colour = color(204, 102, 153); break;
+		case 14: colour = color(102, 102, 153); break;
+		default: colour = 'black'; break;
+	}
+	return colour
 }
