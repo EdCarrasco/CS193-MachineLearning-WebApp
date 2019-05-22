@@ -20,24 +20,25 @@ class Node {
 
 	setClass(nodeclass) {
 		this.nodeclass = nodeclass
-		switch(this.nodeclass) {
+		this.colour = getColour(nodeclass)
+		/*switch(this.nodeclass) {
 			case 0: this.colour = 'white'; break;
 			case 1: this.colour = 'red';break;
 			case 2: this.colour = 'green'; break;
 			case 3: this.colour = 'blue'; break;
 			case 4: this.colour = 'yellow'; break;
-			case 5: this.colour = 'darkblue'; break;
-			case 6: this.colour = 'brown'; break;
-			case 7: this.colour = 'orange'; break;
-			case 8: this.colour = 'purple'; break;
+			case 5: this.colour = 'lightgreen'; break;
+			case 6: this.colour = 'orange'; break;
+			case 7: this.colour = 'brown'; break;
+			case 8: this.colour = 'darkblue'; break;
 			case 9: this.colour = 'lightblue'; break;
-			case 10: this.colour = 'lightgreen'; break;
+			case 10: this.colour = 'purple'; break;
 			case 11: this.colour = 'pink'; break;
 			case 12: this.colour = color(255, 90, 0); break;
 			case 13: this.colour = color(204, 102, 153); break;
 			case 14: this.colour = color(102, 102, 153); break;
 			default: this.colour = 'black'; break;
-		}
+		}*/
 	}
 
 	update() {

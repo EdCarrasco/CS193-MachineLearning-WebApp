@@ -279,23 +279,23 @@ function clusteringFactorInput() {
 
 function getColour(num) {
 	let colour = null
-	switch(num) {
+	switch(num%14+1) {
 		case 0: colour = 'white'; break;
 		case 1: colour = 'red';break;
 		case 2: colour = 'green'; break;
 		case 3: colour = 'blue'; break;
 		case 4: colour = 'yellow'; break;
-		case 5: colour = 'darkblue'; break;
-		case 6: colour = 'brown'; break;
-		case 7: colour = 'orange'; break;
+		case 5: colour = 'lightgreen'; break;
+		case 6: colour = 'orange'; break;
+		case 7: colour = 'brown'; break;
 		case 8: colour = 'purple'; break;
 		case 9: colour = 'lightblue'; break;
-		case 10: colour = 'lightgreen'; break;
+		case 10: colour = 'darkblue'; break;
 		case 11: colour = 'pink'; break;
 		case 12: colour = color(255, 90, 0); break;
 		case 13: colour = color(204, 102, 153); break;
 		case 14: colour = color(102, 102, 153); break;
-		default: colour = 'black'; break;
+		default: colour = 'white'; break;
 	}
 	return colour
 }
