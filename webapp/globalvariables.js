@@ -16,6 +16,7 @@ let nodeManager = null
 let buttonProcessNext = null
 let buttonProcessReset = null
 let stepManager = null
+let treeManager = null
 
 /*
 

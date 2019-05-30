@@ -8,10 +8,10 @@ function setup() {
 	// K-MEANS ALGORITHM STEPS MENU
 	nodeManager = new NodeManager()
 	stepManager = new StepManager(580,10)
-	stepManager.addStep("1. Initialize clusters\n       randomly")
-	stepManager.addStep("2. For each point,\n       Find closest cluster")
-	stepManager.addStep("3. For each cluster,\n       Move it to its center")
-	stepManager.addStep("4. If no clusters moved,\n       algorithm is done")
+	stepManager.addStep("1. Initialize clusters\n      randomly")
+	stepManager.addStep("2. For each point,\n      find its closest cluster")
+	stepManager.addStep("3. For each cluster,\n      move it to its center")
+	stepManager.addStep("4. If no clusters moved,\n      algorithm is done")
 }
 
 function buttonProcessNextFunc() {

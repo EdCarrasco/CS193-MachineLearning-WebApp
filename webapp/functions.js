@@ -29,7 +29,7 @@ function processNext() {
 function generatePoints(num,xrange,yrange) {
 	console.log("generate Points Uniform")
 	nodeManager.generatePointsUniform(num,xrange,yrange)
-	clusterGraph.initialize()
+	treeManager.initialize()
 	nodeManager.restartProcessLoop()
 }
 /*function generatePoints(num,xrange,yrange) {
@@ -123,6 +123,13 @@ function mapPoint(point, xmin,xmax, ymin,ymax) {
 	let new_ymax = height*0.95
 	let x = map(point.x, xmin, xmax, new_xmin, new_xmax)
 	let y = map(point.x, ymin, ymax, new_ymin, new_ymax)
+}
+
+function CombineNext() {
+	let a = 1
+	let b = 3
+	let height = 40
+	let success = treeManager.addBranch(a,b, height)
 }
 
 

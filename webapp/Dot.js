@@ -1,8 +1,30 @@
+class DistanceTable {
+	constructor(pos, nodes) {
+		this.nodes = nodes
+		this.pos = pos
+		this.matrix = []
+	}
+
+	
+}
+
 class TreeManager {
-	constructor(pos) {
+	constructor(pos, nodes) {
+		this.nodes = nodes
 		this.trees = []
 		this.pos = pos
 		this.numLeaves = 0
+	}
+
+	initialize() {
+		this.trees = []
+		for(let i = 0; i < nodeManager.nodes.length; i++) {
+			console.log("init" + i)
+			let x = this.pos.x + 35*i
+			let y = this.pos.y
+			let pos = createVector(x, y)
+			this.addLeaf(pos, i+1, getColour(i+1))
+		}
 	}
 
 	addLeaf(pos, label, colour) {
@@ -108,7 +130,7 @@ class Tree {
 	}
 
 	setLabel(label, colour='white') {
-		this.label = char(65+this.indexLeft)
+		this.label = label//char(65+this.indexLeft)
 		this.colour = colour
 	}
 
@@ -144,7 +166,7 @@ class Tree {
 		push()
 		fill(this.colour)
 		ellipse(x, y, 15)
-		fill('white')
+		fill('black')
 		textAlign(CENTER,CENTER)
 		let str = this.label//(this.indexLeft != this.indexRight) ? this.indexLeft+","+this.indexRight : this.indexLeft
 		text(str, x, y)

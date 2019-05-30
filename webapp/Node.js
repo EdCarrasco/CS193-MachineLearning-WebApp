@@ -1,5 +1,5 @@
 class Node {
-	constructor(position, nodeclass, type='DATA', radius=5, label='') {
+	constructor(position, nodeclass, type='DATA', radius, label='') {
 		this.position = position
 		this.prevposition = position
 		this.nodeclass = nodeclass

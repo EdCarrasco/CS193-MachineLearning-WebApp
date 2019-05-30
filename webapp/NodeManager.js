@@ -1,10 +1,9 @@
 
 class NodeManager {
-	constructor(node_radius=5) {
+	constructor() {
 		this.nodes = []
 		this.clusters = []
 		this.tempClusters = []
-		this.node_radius = node_radius
 		this.allowsNewPoints = false
 
 		this.k = 3
@@ -88,7 +87,7 @@ class NodeManager {
 			let x = randomBounded(0,width)
 			let y = randomBounded(0,height)
 			let point = createVector(x, y)
-			let node = new Node(point, 0, 'DATA', this.node_radius, i+1)
+			let node = new Node(point, 0, 'DATA', 15, i+1)
 			node.setClass(i+1)
 			this.nodes.push(node)
 		}
@@ -102,7 +101,7 @@ class NodeManager {
 			let x = randomBounded(0,width)
 			let y = randomBounded(0,height)
 			let point = createVector(x,y)
-			let node = new Node(point, 0, 'TEMP', this.node_radius)
+			let node = new Node(point, 0, 'TEMP', 25)
 			this.tempClusters.push(node)
 		}
 
@@ -124,7 +123,7 @@ class NodeManager {
 				let x = randomBounded(xmin,xmax)
 				let y = randomBounded(ymin,ymax)
 				let p = createVector(x,y)
-				let node = new Node(p, 0, 'DATA', this.node_radius)
+				let node = new Node(p, 0, 'DATA', 5)
 				this.nodes.push(node)
 
 				// increase half width and height by % of half the max width or max height
@@ -142,7 +141,7 @@ class NodeManager {
 			let x = randomBounded(0,width)
 			let y = randomBounded(0,height)
 			let point = createVector(x, y)
-			let node = new Node(point, 0, 'DATA', this.node_radius)
+			let node = new Node(point, 0, 'DATA', 5)
 			this.nodes.push(node)
 		}
 	}

@@ -50,27 +50,6 @@ class NodeGroup {
 	}
 }
 
-/*class GraphLine {
-	constructor(left,right) {
-		this.left = left
-		this.right = right
-
-		let x = (this.left.position.x + this.right.position.x)/2
-		let y = this.left.position.y
-		this.middle = createVector(x,y)
-		this.height = dist(left.position.x, left.position.y, right.position.x, right.position.y)
-	}
-
-	draw() {
-		push()
-		ellipse(this.left.position.x, this.left.position.y+this.height, 15)
-		ellipse(this.right.position.x, this.right.position.y+this.height, 15)
-		fill('green')
-		ellipse(this.middle.x, this.middle.y+this.height, 15)
-		pop()
-	}
-}*/
-
 class GraphLine {
 	constructor(p1,p2,height) {
 		this.left = p1

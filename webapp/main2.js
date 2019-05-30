@@ -8,16 +8,12 @@ function setup() {
 	let canvas = createCanvas(640,480)
 	canvas.parent('canvas-container')
 
-	nodeManager = new NodeManager(25)
+	nodeManager = new NodeManager()
 	clusterGraph = new ClusterGraph(width*0.55,height*0.05, nodeManager)
 
 }
 
-function CombineNext() {
-	clusterGraph.generateDistanceMatrix()
-	clusterGraph.searchDistanceMatrix()
-	clusterGraph.combineClosestNodeGroups()
-}
+
 
 function draw() {
 	background(51)
@@ -35,41 +31,6 @@ function draw() {
 
 	nodeManager.update()
 	nodeManager.draw()
-
-	/*push()
-	let line_i = 0
-	let line_j = 0
-	let nodey = height*0.1-0
-	for (let i = 0; i < nodeManager.nodes.length; i++) {
-		let x = width*0.55+(23*(i+1))
-		
-
-		if (i == smallest_i) {
-			fill('red')
-			ellipse(x,nodey, 25)
-			line_i = x
-		} else if (i == smallest_j) {
-			fill('blue')
-			ellipse(x,nodey, 25)
-			line_j = x
-		}
-
-		fill('white')
-		ellipse(x, nodey, 15)
-		fill('black')
-		textAlign(CENTER,CENTER)
-		text(i+1, x, nodey)
-	}
-	pop()*/
-	/*push()
-	let liney = nodey + 25/2 + smallestDistance
-	line(line_i,liney, line_j,liney)
-	line(line_i,liney, line_i,nodey+25/2)
-	line(line_j,liney, line_j,nodey+25/2)
-	let avgx = (line_i+line_j)/2
-	textAlign(CENTER,CENTER)
-	text(smallestDistance, avgx, liney+10)
-	pop()*/
 
 	moveNode();
 }

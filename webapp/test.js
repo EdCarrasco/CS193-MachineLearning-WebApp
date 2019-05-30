@@ -1,13 +1,10 @@
-let treeManager = null
-let eyes = []
-let x = 1
-let a = -1, b = -1
-let height
-
 function setup() {
-	createCanvas(640,680)
-	treeManager = new TreeManager(createVector(100,100))
-	for (let i = 0; i < 17; i++) {
+	let canvas = createCanvas(740, 500)
+	canvas.parent('canvas-container')
+
+	nodeManager = new NodeManager()
+	treeManager = new TreeManager(createVector(100,100), nodeManager.nodes)
+	/*for (let i = 0; i < 17; i++) {
 		let x = 35*i
 		let y = 0
 		let pos = createVector(x,y)
@@ -18,16 +15,24 @@ function setup() {
 		eyes.push(i)
 	}
 	console.log(eyes)
-	height = 20
+	height = 20*/
 	
 }
 
 function draw() {
 	background(51)
-	//treeManager.addLeaf(createVector(mouseX,mouseY))
+	push()
+	fill('white')
+	text("framerate: "+round(frameRate()), 10,10)
+	pop()
+	
+	nodeManager.update()
 	treeManager.update()
 
-	push()
+	nodeManager.draw()
+	treeManager.draw()
+
+	/*push()
 	noStroke()
 	if (a >= 0) ellipse(treeManager.pos.x+treeManager.trees[a].pos.x, treeManager.pos.y+treeManager.trees[a].pos.y, 25)
 	if (b >= 0) ellipse(treeManager.pos.x+treeManager.trees[b].pos.x, treeManager.pos.y+treeManager.trees[b].pos.y, 25)
@@ -44,9 +49,9 @@ function draw() {
 		x++
 		a = floor(Math.random(1)*eyes.length)//eyes.splice(floor(Math.random(1)*eyes.length),1)[0]
 		b = floor(Math.random(1)*eyes.length)//eyes.splice(floor(Math.random(1)*eyes.length),1)[0]
-	}
+	}*/
 
-	treeManager.draw()
+	
 	
 }
 
@@ -60,6 +65,7 @@ function mousePressed() {
 	height += 20
 	i += 1
 	j -= 1*/
-	tree = treeManager.getTopDot(5)
-	treeManager.moveLeft(tree)
+
+	//tree = treeManager.getTopDot(5)
+	//treeManager.moveLeft(tree)
 }

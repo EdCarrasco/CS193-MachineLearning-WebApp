@@ -3,23 +3,34 @@
 <head>
 	<meta charset="utf-8">
 	<title>Cluster 2</title>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
 
 	<script type="text/javascript" src="p5.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
+	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>-->
 
-	<script type="text/javascript" src="globalvariables.js"></script>
+	<!--<script type="text/javascript" src="globalvariables.js"></script>
 	<script type="text/javascript" src="functions.js"></script>
 	<script type="text/javascript" src="Dot.js"></script>
 	<script type="text/javascript" src="Node.js"></script>
 	<script type="text/javascript" src="NodeManager.js"></script>
-	<script type="text/javascript" src="GraphManager.js"></script>
-	<script type="text/javascript" src="test.js"></script>
+	<script type="text/javascript" src="GraphManager.js"></script>-->
+	<script type="text/javascript" src="Cluster.js"></script>
 </head>
 <body>
 	<div id="canvas-container"></div>
-	<button id="buttonGenerate" onclick="generatePoints(6,0.5,1.0);">Generate points</button>
-
-	<button onclick="CombineNext();">Combine Closest</button>
+	<span>Data</span>
+	<button onclick="buttonRandomize();">Randomize</button>
+	<span>10</span>
+	<!-- <button>Load</button>
+	<button>Export</button> -->
+	<br/>
+	<span>Algorithm</span>
+	<button onclick="buttonRestart();">Restart</button>
+	<button onclick="buttonNext();">Next</button>
+	<br/>
+	<span>Linkage</span>
+	<button onclick="buttonSingleLinkage();">Single</button>
+	<button onclick="buttonCompleteLinkage();">Complete</button>
+	<button onclick="buttonAverageLinkage();">Average</button>
 </body>
 </html>
