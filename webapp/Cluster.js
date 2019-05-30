@@ -39,21 +39,24 @@ function buttonRestart() {
 }
 
 function buttonSingleLinkage() {
-	clusterManager.setType(SINGLE_LINKAGE)
-	clusterManager.initialize()
-	treeManager.initialize()
+	clusterManager.setViewType(SINGLE_LINKAGE)
+	treeManager.setViewType(SINGLE_LINKAGE)
+	//clusterManager.initialize()
+	//treeManager.initialize()
 }
 
 function buttonCompleteLinkage() {
-	clusterManager.setType(COMPLETE_LINKAGE)
-	clusterManager.initialize()
-	treeManager.initialize()
+	clusterManager.setViewType(COMPLETE_LINKAGE)
+	treeManager.setViewType(COMPLETE_LINKAGE)
+	//clusterManager.initialize()
+	//treeManager.initialize()
 }
 
 function buttonAverageLinkage() {
-	clusterManager.setType(AVERAGE_LINKAGE)
-	clusterManager.initialize()
-	treeManager.initialize()
+	clusterManager.setViewType(AVERAGE_LINKAGE)
+	treeManager.setViewType(AVERAGE_LINKAGE)
+	//clusterManager.initialize()
+	//treeManager.initialize()
 }
 
 /*==========================================================*/
@@ -90,15 +93,8 @@ function draw() {
 	background(51)
 
 	treeManager.draw()
-	//clusterManager.draw()
+	clusterManager.draw()
 	nodeManager.draw()
-
-	push()
-	fill('white')
-	text(clusterManager.clustersSL.length, 100,100)
-	text(clusterManager.clustersCL.length, 100,120)
-	text(clusterManager.clustersAL.length, 100,140)
-	pop()
 }
 
 /*========================================*/
@@ -126,14 +122,14 @@ function getColour(num) {
 		case 4: colour = 'yellow'; break;
 		case 5: colour = 'lightgreen'; break;
 		case 6: colour = 'orange'; break;
-		case 7: colour = 'brown'; break;
+		case 7: colour = color(102, 102, 153); break; // grey blue
 		case 8: colour = 'purple'; break;
 		case 9: colour = 'lightblue'; break;
-		case 10: colour = 'darkblue'; break;
-		case 11: colour = 'pink'; break;
-		case 12: colour = color(255, 90, 0); break;
-		case 13: colour = color(204, 102, 153); break;
-		case 14: colour = color(102, 102, 153); break;
+		case 10: colour = 'pink'; break;
+		case 11: colour = 'darkblue'; break;
+		case 12: colour = 'brown'; break;
+		case 13: colour = color(255, 90, 0); break; // dark orange
+		case 14: colour = color(204, 102, 153); break; // dark pink
 		default: colour = 'white'; break;
 	}
 	return colour
@@ -251,7 +247,7 @@ class Cluster {
 	}
 
 	addNode(node) {
-		console.log("addNode :: array size: " + this.nodes.length)
+		//console.log("addNode :: array size: " + this.nodes.length)
 		let index = this.nodes.indexOf(node)
 		if (index == -1) {
 			this.nodes.push(node)
@@ -350,14 +346,13 @@ class ClusterManager {
 		this.matrixSL = []
 		this.matrixCL = []
 		this.matrixAL = []
-		this.closestPairSL = []
-		this.closestPairCL = []
-		this.closestPairAL = []
+		
+		this.closestPairIndex = [[-1,-1],[-1,-1],[-1,-1]]
+
 		this.smallestDistanceSL = -1
 		this.smallestDistanceCL = -1
 		this.smallestDistanceAL = -1
 
-		this.type = AVERAGE_LINKAGE
 		this.viewType = AVERAGE_LINKAGE
 	}
 
@@ -380,8 +375,7 @@ class ClusterManager {
 		this.populateMatrices()
 	}
 
-	setType(type) {
-		this.type = type
+	setViewType(type) {
 		this.viewType = type
 	}
 
@@ -495,9 +489,9 @@ class ClusterManager {
 		this.matrixCL = []
 		this.matrixAL = []
 
-		let rcdSL = [null,null,-1]
-		let rcdCL = [null,null,-1]
-		let rcdAL = [null,null,-1]
+		let dataSL = [null,null,-1]
+		let dataCL = [null,null,-1]
+		let dataAL = [null,null,-1]
 
 		let smallestDistanceSL = Infinity
 		let smallestDistanceCL = Infinity
@@ -514,26 +508,26 @@ class ClusterManager {
 				rowCL.push(distanceCL)
 				rowAL.push(distanceAL)
 				if (distanceSL < smallestDistanceSL && distanceSL >= 0) {
-					//this.closestPairSL = [r,c]
+					this.closestPairIndex[SINGLE_LINKAGE] = [r,c]
 					smallestDistanceSL = distanceSL
-					rcdSL = [this.clustersSL[r], this.clustersSL[c], distanceSL]
+					dataSL = [this.clustersSL[r], this.clustersSL[c], distanceSL]
 				}
 				if (distanceCL < smallestDistanceCL && distanceCL >= 0) {
-					//this.closestPairCL = [r,c]
+					this.closestPairIndex[COMPLETE_LINKAGE] = [r,c]
 					smallestDistanceCL = distanceCL
-					rcdCL = [this.clustersCL[r], this.clustersCL[c], distanceCL]
+					dataCL = [this.clustersCL[r], this.clustersCL[c], distanceCL]
 				}
 				if (distanceAL < smallestDistanceAL && distanceAL >= 0) {
-					//this.closestPairAL = [r,c]
+					this.closestPairIndex[AVERAGE_LINKAGE] = [r,c]
 					smallestDistanceAL = distanceAL
-					rcdAL = [this.clustersAL[r], this.clustersAL[c], distanceAL]
+					dataAL = [this.clustersAL[r], this.clustersAL[c], distanceAL]
 				}
 			}
 			this.matrixSL.push(rowSL)
 			this.matrixCL.push(rowCL)
 			this.matrixAL.push(rowAL)
 		}
-		return [rcdSL, rcdCL, rcdAL]
+		return [dataSL, dataCL, dataAL]
 	}
 
 	combineClosestClusters() {
@@ -556,75 +550,51 @@ class ClusterManager {
 
 		if (clusterA_SL && clusterB_SL) {
 			this.mergeClusters(this.clustersSL, clusterA_SL, clusterB_SL)
-			this.treeManager.addBranch(clusterA_SL.nodes[0], clusterB_SL.nodes[0], distanceSL)
+			this.treeManager.addBranch(SINGLE_LINKAGE, clusterA_SL.nodes[0], clusterB_SL.nodes[0], distanceSL)
 		}
 		if (clusterA_CL && clusterB_CL) {
 			this.mergeClusters(this.clustersCL, clusterA_CL, clusterB_CL)
-			//this.treeManager.addBranch(clusterA_CL.nodes[0], clusterB_CL.nodes[0], distanceCL)
+			this.treeManager.addBranch(COMPLETE_LINKAGE, clusterA_CL.nodes[0], clusterB_CL.nodes[0], distanceCL)
 		}
 		if (clusterA_AL && clusterB_AL) {
 			this.mergeClusters(this.clustersAL, clusterA_AL, clusterB_AL)
-			//this.treeManager.addBranch(clusterA_AL.nodes[0], clusterB_AL.nodes[0], distanceAL)
+			this.treeManager.addBranch(AVERAGE_LINKAGE, clusterA_AL.nodes[0], clusterB_AL.nodes[0], distanceAL)
 		}
 	}
-
-	findClosestClusters() {
-		//console.log("findClosestClusters()...")
-		let smallestDistanceClusters = Infinity
-		let clusterA = null
-		let clusterB = null
-		let result = [] // (nodeA, nodeB, distance)
-		for (let k = 0; k < this.clustersSL.length-1; k++) {
-			this.clustersSL[k].showPrev = false
-			for (let l = k+1; l < this.clustersSL.length; l++) {
-				this.clustersSL[l].showPrev = false
-				result = this.distanceFunction(k,l)
-				if (result[2] < smallestDistanceClusters) {
-					smallestDistanceClusters = result[2]
-					clusterA = this.clustersSL[k]
-					clusterB = this.clustersSL[l]
-				}
-			}
-		}
-		this.lastResult = result
-
-		if (clusterA && clusterB) {
-			this.posA = clusterA.position.copy()
-			this.radiusA = clusterA.clusterRadius
-			this.posB = clusterB.position.copy()
-			this.radiusB = clusterB.clusterRadius
-			this.lastHeight = smallestDistanceClusters
-		} else {
-			this.posA = null
-			this.radiusA = -1
-			this.posB = null
-			this.radiusB = -1
-			this.lastHeight = -1
-		}
-		//console.log("smallestDistanceClusters: (" + this.nodeManager.indexOf(this.lastResult[0]) + " --- " + this.nodeManager.indexOf(this.lastResult[1]) + ") " + smallestDistanceClusters)
-		return [clusterA, clusterB, smallestDistanceClusters]
-	}
-
-
 
 	indexOf(cluster) {
 		return this.nodeManager.indexOf(cluster.nodes[0])
 	}
 
+	getClusterArray(type) {
+		switch(this.viewType) {
+			case SINGLE_LINKAGE: return this.clustersSL
+			case COMPLETE_LINKAGE: return this.clustersCL
+			case AVERAGE_LINKAGE: return this.clustersAL
+			default: return this.clustersSL
+		}
+	}
+
+	getMatrixArray(type) {
+		switch(this.viewType) {
+			case SINGLE_LINKAGE: return this.matrixSL
+			case COMPLETE_LINKAGE: return this.matrixCL
+			case AVERAGE_LINKAGE: return this.matrixAL
+			default: return this.matrixSL
+		}
+	}
+
 	draw() {
-		for (let cluster of this.clustersSL) {
+		let clusterArray = this.getClusterArray(this.viewType)
+		let matrixArray = this.getMatrixArray(this.viewType)
+		for (let cluster of clusterArray) {
 			cluster.draw()
 		}
-		/*if (this.posA && this.posB) {
-			push()
-			strokeWeight(1)
-			stroke('grey')
-			noFill()
-			ellipse(this.posA.x, this.posA.y, this.radiusA*2)
-			ellipse(this.posB.x, this.posB.y, this.radiusB*2)
 
-			pop()
-		}*/
+		this.drawMatrix(matrixArray, clusterArray, this.closestPairIndex[this.viewType])
+
+		/*
+
 		if (this.posA) {
 			push()
 			translate(this.posA)
@@ -648,8 +618,8 @@ class ClusterManager {
 		//if (this.lastResult.length > 0) {
 			push()
 			console.log(this.lastResult)
-			let posA = /*(this.type == AVERAGE_LINKAGE) ? this.lastResult[0] : */this.lastResult[0].position
-			let posB = /*(this.type == AVERAGE_LINKAGE) ? this.lastResult[1] : */this.lastResult[1].position
+			let posA = (this.type == AVERAGE_LINKAGE) ? this.lastResult[0] : /this.lastResult[0].position
+			let posB = (this.type == AVERAGE_LINKAGE) ? this.lastResult[1] : this.lastResult[1].position
 			console.log(this.type == 2 ? "average linkage" : "other linkage")
 			let vector = p5.Vector.sub(posB, posA)
 			
@@ -685,23 +655,25 @@ class ClusterManager {
 					this.drawMatrix(this.matrixAL, this.closestPairAL)
 					break
 		}
+
+		*/
 	}
 
-	drawMatrix(matrix, smallestPair) {
+	drawMatrix(matrixArray, clusterArray, closestPair) {
 		push()
 		translate(this.position)
 		textAlign(LEFT,CENTER)
 		let xcell = 32
 		let ycell = 24
-		for (let r = 0; r < matrix.length; r++) {
-			this.clustersSL[r].drawTiny(createVector(-20, r*ycell), -1, 1)
-			this.clustersSL[r].drawTiny(createVector(r*xcell, -20), -1, 1, true)
-			for (let c = 0; c < matrix.length; c++) {
-				if (r == smallestPair[0] && c == smallestPair[1])
+		for (let r = 0; r < matrixArray.length; r++) {
+			clusterArray[r].drawTiny(createVector(-20, r*ycell), -1, 1)
+			clusterArray[r].drawTiny(createVector(r*xcell, -20), -1, 1, true)
+			for (let c = 0; c < matrixArray.length; c++) {
+				if (r == closestPair[0] && c == closestPair[1])
 					fill('orange')
 				else
 					fill('black')
-				text(round(matrix[r][c]), c*xcell, r*ycell)
+				text(round(matrixArray[r][c]), c*xcell, r*ycell)
 			}
 		}
 		pop()
@@ -737,137 +709,164 @@ class Tree {
 class TreeManager {
 	constructor(position) {
 		this.position = position
-		this.trees = []
+		this.treesSL = []
+		this.treesCL = []
+		this.treesAL = []
 		this.nodeManager = null
 		this.clusterManager = null
 		this.radius = 10
+		this.viewType = SINGLE_LINKAGE
 	}
 
 	linkNodeManager(nm) {this.nodeManager = nm}
 	linkClusterManager(cm) {this.clusterManager = cm}
 
 	initialize() {
-		this.trees = []
-		let x = 0
+		this.treesSL = []
+		this.treesCL = []
+		this.treesAL = []
+		//let x = 0
 		for (let node of this.nodeManager.nodes) {
-			let position = createVector(this.position.x+x, this.position.y)
-			let tree = new Tree(node, node.label, null, null, 0)
-			this.trees.push(tree)
-			x += 20
+			//let position = createVector(this.position.x+x, this.position.y)
+			let treeSL = new Tree(node, node.label, null, null, 0)
+			let treeCL = new Tree(node, node.label, null, null, 0)
+			let treeAL = new Tree(node, node.label, null, null, 0)
+			this.treesSL.push(treeSL)
+			this.treesCL.push(treeCL)
+			this.treesAL.push(treeAL)
+			//x += 20
 		}
 	}
 
-	connect(clusterA, clusterB, height) {
-		let i = this.nodeManager.indexOf(clusterA.nodes[0])
-		let j = this.nodeManager.indexOf(clusterB.nodes[0])
-		this.addBranch(i,j, height)
+	setViewType(type) {
+		this.viewType = type
 	}
 
-	indexOf(node) {
-		for (let i = 0; i < this.trees.length; i++) {
-			if (node == this.trees[i].node) {
+	addBranch(type, nodeA, nodeB, height) {
+		if (nodeA == nodeB) {
+			console.log("addBranch -- failed: same node")
+			return false // cant combine same leaf
+		}
+
+		let treeArray = this.getTreeArray(type)
+		
+		let i = this.indexOf(treeArray, nodeA)
+		let j = this.indexOf(treeArray, nodeB)
+		if (i > j) {[i,j]=[j,i]}
+
+		let leftTree = this.getTopParent(treeArray, i)
+		let rightTree = this.getTopParent(treeArray, j)
+
+		//let ll = array.indexOf(leftTree.getLeftmostLeaf())
+		let lr = treeArray.indexOf(leftTree.getRightmostLeaf())
+		if (lr >= j) return false // leaf j is already inside leftTree
+
+		let rl = treeArray.indexOf(rightTree.getLeftmostLeaf())
+		let rr = treeArray.indexOf(rightTree.getRightmostLeaf())
+		
+		let rw = rr - rl + 1 // rightTree's width
+		let splicedTree = treeArray.splice(rl, rw)
+		treeArray.splice(lr+1, 0, ...splicedTree)
+
+		let label = leftTree.label + "," + rightTree.label
+		let tree = new Tree(null, label, leftTree, rightTree, height)
+		leftTree.parent = rightTree.parent = tree
+		treeArray.push(tree)
+		
+		return true
+	}
+
+	indexOf(treeArray, node) {
+		for (let i = 0; i < treeArray.length; i++) {
+			if (node == treeArray[i].node) {
 				return i
 			}
 		}
 		return -1
 	}
 
-	addBranch(nodeA, nodeB, height) {
-		if (nodeA == nodeB) {
-			console.log("addBranch -- failed: same node")
-			return false // cant combine same leaf
-		}
-		let i = this.indexOf(nodeA)
-		let j = this.indexOf(nodeB)
-		if (i > j) {[i,j]=[j,i]}
-		
-		let leftTree = this.getTopParent(i)
-		let rightTree = this.getTopParent(j)
-
-		
-
-		let ll = this.trees.indexOf(leftTree.getLeftmostLeaf())
-		let lr = this.trees.indexOf(leftTree.getRightmostLeaf())
-		if (lr >= j) return false // leaf j is already inside leftTree
-
-		let rl = this.trees.indexOf(rightTree.getLeftmostLeaf())
-		let rr = this.trees.indexOf(rightTree.getRightmostLeaf())
-		//console.log("addBranch " + i + "," + j + "--  " + ll + "," + lr + " -- " + rl + "," + rr)
-		
-		let rw = rr - rl + 1 // rightTree's width
-		let splicedTree = this.trees.splice(rl, rw)
-		//let splicedNodes = this.nodeManager.nodes.splice(rl, rw)
-		this.trees.splice(lr+1, 0, ...splicedTree)
-		//this.nodeManager.nodes.splice(lr+1, 0, ...splicedNodes)
-
-		let label = leftTree.label + "," + rightTree.label
-		let tree = new Tree(null, label, leftTree, rightTree, height)
-		this.trees.push(tree)
-		leftTree.parent = rightTree.parent = tree
-
-		//console.log("addBranch leftLabel " + leftTree.label + " rightLabel " + rightTree.label)
-		return true
-	}
-
-	getTopParent(index) {
-		let ptr = this.trees[index]
+	getTopParent(array, index) {
+		let ptr = array[index]
 		while (ptr.parent) {
 			ptr = ptr.parent
 		}
 		return ptr
 	}
 
-	draw() {
-		// Calculate leaf positions
-		let numLeaf = this.nodeManager.nodes.length
-		let x = this.position.x
-		for (let i = 0; i < numLeaf; i++) {
-			let y = this.position.y
-			this.trees[i].position = createVector(x,y)
-			x+= this.radius*2 + 5
-		}
-
-		// Draw branches
-		let r = (this.trees.length > 0) ? this.trees[0].radius : 0
-		for (let i = numLeaf; i < this.trees.length; i++) {
-			let branch = this.trees[i]
-			let xl = branch.left.position.x
-			let xr = branch.right.position.x
-			let x = (xl+xr)/2
-			let y = this.position.y + this.radius + this.trees[i].height
-			branch.position = createVector(x,y)
-
-			push()
-			stroke('white')
-			stroke(getColour(branch.label[0]))
-			line(xl, branch.position.y, branch.position.x, branch.position.y)
-			line(xl, branch.position.y, xl, branch.left.position.y)
-			stroke(getColour(branch.label[branch.label.length-1]))
-			line(branch.position.x, branch.position.y, xr, branch.position.y)
-			line(xr, branch.position.y, xr, branch.right.position.y)
-			pop()
-
-			push()
-			translate(branch.position)
-			fill('white')
-			textAlign(CENTER,TOP)
-			text(round(branch.height), 0,-15)
-			pop()
-		}
-
-		// Draw leaves
-		for (let i = 0; i < numLeaf; i++) {
-			push()
-			translate(this.trees[i].position)
-			noStroke()
-			fill(getColour(this.trees[i].node.label))
-			ellipse(0,0, this.radius*2)
-			fill('black')
-			textAlign(CENTER,CENTER)
-			text(this.trees[i].label, 0,0)
-			pop()
+	getTreeArray(type) {
+		switch (type) {
+			case SINGLE_LINKAGE: return this.treesSL
+			case COMPLETE_LINKAGE: return this.treesCL
+			case AVERAGE_LINKAGE: return this.treesAL
+			default: return this.treesSL
 		}
 	}
 
-	
+	draw() {
+		let array = this.getTreeArray(this.viewType)
+		let numLeaves = this.nodeManager.nodes.length
+		this.calcLeafPositions(array, numLeaves)
+		this.drawBranches(array, numLeaves)
+		this.drawBranches(array, numLeaves)
+		this.drawLeaves(array, numLeaves)
+	}
+
+	calcLeafPositions(array, numLeaves) {
+		let x = this.position.x
+		for (let i = 0; i < numLeaves; i++) {
+			let y = this.position.y
+			array[i].position = createVector(x,y)
+			x+= this.radius*2 + 5
+		}
+	}
+
+	drawBranches(array, numLeaves) {
+		let r = (array.length > 0) ? array[0].radius : 0
+		for (let i = numLeaves; i < array.length; i++) {
+			let branch = array[i]
+			let xl = branch.left.position.x
+			let xr = branch.right.position.x
+			let x = (xl+xr)/2
+			let y = this.position.y + this.radius +array[i].height
+			branch.position = createVector(x,y)
+
+			this.drawBranchLines(branch, xl, xr)
+			this.drawBranchText(branch)
+		}
+	}
+
+	drawBranchLines(branch, xl, xr) {
+		push()
+		stroke('white')
+		stroke(getColour(branch.label[0]))
+		line(xl, branch.position.y, branch.position.x, branch.position.y)
+		line(xl, branch.position.y, xl, branch.left.position.y)
+		stroke(getColour(branch.label[branch.label.length-1]))
+		line(branch.position.x, branch.position.y, xr, branch.position.y)
+		line(xr, branch.position.y, xr, branch.right.position.y)
+		pop()
+	}
+
+	drawBranchText(branch) {
+		push()
+		translate(branch.position)
+		fill('white')
+		textAlign(CENTER,TOP)
+		text(round(branch.height), 0,-15)
+		pop()
+	}
+
+	drawLeaves(array, numLeaves) {
+		for (let i = 0; i < numLeaves; i++) {
+			push()
+			translate(array[i].position)
+			noStroke()
+			fill(getColour(array[i].node.label))
+			ellipse(0,0, this.radius*2)
+			fill('black')
+			textAlign(CENTER,CENTER)
+			text(array[i].label, 0,0)
+			pop()
+		}
+	}
 }
