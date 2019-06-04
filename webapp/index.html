@@ -15,15 +15,6 @@
 	<script type="text/javascript" src="main.js"></script>
 
 	<style type="text/css">
-		.red {
-			background-color: rgb(255,100,100);
-		}
-		.green {
-			background-color: rgb(100,255,100);
-		}
-		.blue {
-			background-color: rgb(100,100,255);
-		}
 		.slider {
 			margin-top: 10px;
 		}
@@ -39,19 +30,20 @@
 </head>
 <body>
 	<div id="canvas-container"></div>
+
 	<!-- COLOR BUTTONS -->
-	<button id="button1" class="red" onclick="setClass(1);">Red</button>
+	<!-- <button id="button1" class="red" onclick="setClass(1);">Red</button>
 	<button id="button2" class="green" onclick="setClass(2);">Green</button>
-	<button id="button3" class="blue" onclick="setClass(3) ;">Blue</button>
+	<button id="button3" class="blue" onclick="setClass(3) ;">Blue</button> -->
 
 	<!-- KNN BUTTONS -->
-	<button id="button1" onclick="setK(0);">0</button>
+	<!-- <button id="button1" onclick="setK(0);">0</button>
 	<button id="button1" onclick="setK(3);">3</button>
 	<button id="button2" onclick="setK(7);">7</button>
 	<button id="button2" onclick="setK(1000);">ALL</button>
-	<span>--</span>
+	<span>--</span> -->
+
 	<!-- ALGORITHM BUTTONS -->
-	<br/>
 	<div>
 		<div style="padding-top: 10px;">
 			<span>K-Means Algorithm</span>
@@ -67,7 +59,7 @@
 			<span>Data points</span>
 			<button style="height:34px;" id="buttonGenerateClustered" onclick="generatePointsClustered(1000, 20);"><strong>Randomize</strong></button>
 
-			<button onclick="setClass(0);"><i class="material-icons" style="padding-top: 2px;">create</i></button>
+			<!-- <button onclick="setClass(0);"><i class="material-icons" style="padding-top: 2px;">create</i></button> -->
 		</div>
 	</div>
 	<!-- NOISE SLIDER -->
@@ -78,7 +70,7 @@
 	</div>
 	<!-- CLUSTERING FACTOR SLIDER -->
 	<div class="slider-container">
-		<span>Clustering</span>
+		<span>Clustering factor</span>
 		<input type="range" name="slider-clustering-factor" min="0" max="1" step="0.01" value="1" class="slider" id="slider-clustering-factor" onmouseup="clusteringFactorInput();" oninput="clusteringFactorInput();">
 		<label id="label-clustering-factor">1</label>
 	</div>
@@ -103,10 +95,6 @@
 	<br/>
 	<input type="file" name="file-open" id="file-open" value="Import">
 	<button id="file-save">Export...</button>
-
-	<p>TEXT</p>
-
-
 	<script type="text/javascript" src="save.js"></script>
 </body>
 </html>

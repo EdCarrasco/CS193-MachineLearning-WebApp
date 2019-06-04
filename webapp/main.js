@@ -40,8 +40,8 @@ function draw() {
 	let pos = createVector(mouseX,mouseY)
 	nodeManager.findKNN(pos)
 
-	drawDebugText()
-	drawTempClusters()
+	//drawDebugText()
+	//drawTempClusters()
 
 	stepManager.draw()
 }

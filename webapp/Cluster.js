@@ -6,6 +6,9 @@ let SINGLE_LINKAGE = 0
 let COMPLETE_LINKAGE = 1
 let AVERAGE_LINKAGE = 2
 
+let autoplay = false
+let buttonAutoplay = null
+
 /*
 1. Generate distance matrix between all pairs of clusters
 	a. Distance between clusters can be defined as:
@@ -17,13 +20,32 @@ let AVERAGE_LINKAGE = 2
 4. Repeat steps 1 - 3 until there is only one cluster
 */
 
+function buttonToggleAutoplay() {
+	autoplay = !autoplay
+	
+	
+}
+
+function updateAutoplayButton() {
+	if (!buttonAutoplay) return
+	buttonAutoplay.innerHTML = (autoplay) ? "pause" : "play_arrow"
+}
+
 function buttonRandomize() {
+	let slider = document.getElementById('amount-slider')
+	let amount = slider.value
 	let topLeftBoundary = createVector(10,10)
 	let bottomRightBoundary = createVector(width*0.4,height-10)
 
 	nodeManager.initialize()
-	nodeManager.createMultipleNodes(10, topLeftBoundary, bottomRightBoundary)
+	nodeManager.createMultipleNodes(amount, topLeftBoundary, bottomRightBoundary)
 	clusterManager.populateMatrices()
+}
+
+function updateAmountSlider() {
+	let slider = document.getElementById('amount-slider')
+	let label = document.getElementById('amount-label')
+	label.innerHTML = slider.value
 }
 
 function buttonNext() {
@@ -62,11 +84,12 @@ function buttonAverageLinkage() {
 /*==========================================================*/
 
 function setup() {
-	let canvas = createCanvas(1200, 400)
+	let canvas = createCanvas(1520, 400)
 	canvas.parent('canvas-container')
+	buttonAutoplay = document.getElementById('button-autoplay-icon')
 	
-	clusterManager = new ClusterManager(createVector(860,50))
-	treeManager = new TreeManager(createVector(550,20))
+	clusterManager = new ClusterManager(createVector(width*0.7+5,50))
+	treeManager = new TreeManager(createVector(width*0.45,20))
 	nodeManager = new NodeManager()
 
 	linkManagers(nodeManager, clusterManager, treeManager)
@@ -83,14 +106,21 @@ function setup() {
 	nodeManager.createNode(createVector(200,height-300), 5)
 	nodeManager.createNode(createVector(250,height-290), 6)*/
 
-	let topLeft = createVector(10,10)
-	let bottomRight = createVector(width*0.4,height-10)
+	let topLeft = createVector(20,20)
+	let bottomRight = createVector(width*0.2,height-20)
 	nodeManager.createMultipleNodes(10, topLeft, bottomRight)
 	clusterManager.populateMatrices()
 }
 
 function draw() {
 	background(51)
+
+	updateAmountSlider()
+	updateAutoplayButton()
+
+	if (autoplay && clusterManager.clustersSL.length > 1) {
+		buttonNext()
+	}
 
 	treeManager.draw()
 	clusterManager.draw()
@@ -207,7 +237,7 @@ class NodeManager {
 
 	createMultipleNodes(amount, topLeft, bottomRight) {
 		for (let i = 0; i < amount; i++) {
-			let x = randomBounded(topLeft.x, bottomRight.x)
+			let x = randomBounded(topLeft.x, width/3)
 			let y = randomBounded(topLeft.y, bottomRight.y)
 	
 			let pos = createVector(x,y)
@@ -293,7 +323,7 @@ class Cluster {
 		}
 	}
 
-	drawTiny(offset, xdir, ydir, rotated) {
+	drawTiny(offset, xdir, ydir, isRotated, radius) {
 		let n = this.nodes.length
 		push()
 		translate(offset)
@@ -302,10 +332,10 @@ class Cluster {
 			let y = ydir * (i % 3) * 6
 			fill(getColour(this.nodes[i].label))
 			noStroke()
-			if (rotated)
-				ellipse(y,x, 5)
+			if (isRotated)
+				ellipse(y,x, radius)
 			else
-				ellipse(x,y, 5)
+				ellipse(x,y, radius)
 		}
 		pop()
 	}
@@ -402,6 +432,12 @@ class ClusterManager {
 		this.lastResultCL = []
 		this.lastResultAL = []
 	}
+
+	/*
+	USAGE DOCUMENT
+	DESIGN -- considerations, what was difficult
+	1-2 pages each
+	*/
 
 	mergeClusters(array, clusterA, clusterB) {
 		//console.log("mergeClusters :: (" + clusterA.label + ") and (" + clusterB.label + ")")
@@ -664,16 +700,24 @@ class ClusterManager {
 		translate(this.position)
 		textAlign(LEFT,CENTER)
 		let xcell = 32
-		let ycell = 24
+		let ycell = 26
+		let radius = 6
 		for (let r = 0; r < matrixArray.length; r++) {
-			clusterArray[r].drawTiny(createVector(-20, r*ycell), -1, 1)
-			clusterArray[r].drawTiny(createVector(r*xcell, -20), -1, 1, true)
+			let yoffset = (clusterArray[r].nodes.length == 2) ? 4 : 
+										(clusterArray[r].nodes.length >= 3) ? 8 :
+										0
+			let xoffset = (clusterArray[r].nodes.length == 1) ? 8 :
+										(clusterArray[r].nodes.length == 2) ? 4 :
+										0
+			clusterArray[r].drawTiny(createVector(-20, r*ycell-yoffset), -1, 1, false, radius)
+			clusterArray[r].drawTiny(createVector(r*xcell+xoffset, -20), -1, 1, true, radius)
 			for (let c = 0; c < matrixArray.length; c++) {
 				if (r == closestPair[0] && c == closestPair[1])
 					fill('orange')
 				else
-					fill('black')
-				text(round(matrixArray[r][c]), c*xcell, r*ycell)
+					fill(200)
+				if (matrixArray[r][c] >= 0)
+					text(round(matrixArray[r][c]), c*xcell, r*ycell)
 			}
 		}
 		pop()

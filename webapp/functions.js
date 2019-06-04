@@ -238,7 +238,7 @@ function arrayToNodes(array) {
 		let nodeclass = (array[i].length >= 3) ? array[i][2] : 0
 
 		let p = createVector(x,y)
-		let node = new Node(p, nodeclass)
+		let node = new Node(p, nodeclass, 'DATA', 5)
 		_nodes.push(node)
 	}
 
@@ -286,7 +286,7 @@ function clusteringFactorInput() {
 
 function getColour(num) {
 	let colour = null
-	switch(num%14+1) {
+	switch(num%14) {
 		case 0: colour = 'white'; break;
 		case 1: colour = 'red';break;
 		case 2: colour = 'green'; break;
