@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Cluster 2</title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<script type="text/javascript" src="../includes/p5.js"></script>
+	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>-->
+
+	<!--<script type="text/javascript" src="globalvariables.js"></script>
+	<script type="text/javascript" src="functions.js"></script>
+	<script type="text/javascript" src="Dot.js"></script>
+	<script type="text/javascript" src="Node.js"></script>
+	<script type="text/javascript" src="NodeManager.js"></script>
+	<script type="text/javascript" src="GraphManager.js"></script>-->
+	<script type="text/javascript" src="Cluster.js"></script>
+	<style type="text/css">
+		/*.slider {
+			margin-top: 10px;
+		}*/
+		.button-row {
+			display: flex;
+			align-items: center;
+			padding-top: 0.4em;
+		}
+		.button-row span, .button-row button {
+			margin-right: 0.4em;
+		}
+		button {
+			height: 34px;
+			margin-bottom: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div id="canvas-container"></div>
+	<span>Data</span>
+	<button onclick="buttonRandomize();"><strong>Randomize</strong></button>
+	
+	<input id="amount-slider" type="range" value="10" min="1" max="14" step="1"></input>
+	<span id="amount-label">10</span>
+	<!-- <button>Load</button>
+	<button>Export</button> -->
+	<br/>
+	<span>Hierarchical Algorithm</span>
+	<button id="button-autoplay" onclick="buttonToggleAutoplay()"><i id="button-autoplay-icon" class="material-icons" style="padding-top: 2px;">play_arrow</i></button>
+	<button onclick="buttonNext();"><i class="material-icons" style="padding-top: 2px;">redo</i></button>
+	<button onclick="buttonRestart();"><i class="material-icons" style="padding-top: 2px;">fast_rewind</i></button>
+	<br/>
+	<span>Linkage</span>
+	<button onclick="buttonSingleLinkage();"><strong>Single</strong></button>
+	<button onclick="buttonCompleteLinkage();"><strong>Complete</strong></button>
+	<button onclick="buttonAverageLinkage();"><strong>Average</strong></button>
+</body>
+</html>
